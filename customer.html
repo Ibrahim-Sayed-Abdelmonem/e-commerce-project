@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | E-commerce Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --light-gray: #f9fafb;
+            --gray: #e5e7eb;
+            --dark-gray: #9ca3af;
+            --error-color: #ef4444;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --hover-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-gray);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-color);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            right: 50px;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .header-nav a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .user-name {
+            cursor: pointer;
+        }
+
+        #hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        #hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        #sidebar {
+            width: 280px;
+            background: white;
+            color: var(--text-color);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: calc(100vh - 80px);
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: var(--card-shadow);
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #sidebar ul li a {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #sidebar ul li a:hover,
+        #sidebar ul li a.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(8px);
+        }
+
+        #sidebar ul li a i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        main {
+            margin-top: 80px;
+            margin-left: 0;
+            padding: 2rem;
+            flex-grow: 1;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        main.with-sidebar {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+        }
+
+        section {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #product-catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-card h3 {
+            font-size: 1.25rem;
+            margin: 0.5rem 0;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .product-card p {
+            color: var(--text-light);
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .product-card .price {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .product-card button {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .product-card button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .star-rating,
+        .interactive-rating {
+            color: #fbbf24;
+            margin: 0.75rem 0;
+        }
+
+        .star-rating .fa-star,
+        .interactive-rating .fa-star {
+            font-size: 1.1rem;
+        }
+
+        .star-rating .fa-star.empty,
+        .interactive-rating .fa-star.empty {
+            color: var(--gray);
+        }
+
+        .interactive-rating .fa-star {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .interactive-rating .fa-star:hover {
+            transform: scale(1.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table th,
+        table td {
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            text-align: left;
+        }
+
+        table thead {
+            background: var(--light-gray);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: var(--light-gray);
+        }
+
+        table tbody tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        #cart table td button {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #cart table td button:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        #checkout-button {
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #checkout-button:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        form input,
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--gray);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--light-gray);
+        }
+
+        form input:focus,
+        form textarea:focus,
+        form select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background-color: white;
+        }
+
+        form button {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        form button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+        .track-order{
+            background-color: black;
+            width: 100px;
+            height: 50px;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            border: none;
+        }
+        .track-order:hover{
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            cursor: pointer;
+        }
+        #search-bar {
+            padding: 0.75rem;
+            border: 1px solid var(--gray);
+            border-radius: 12px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            background: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            width: 100%;
+            margin-top: auto;
+            font-size: 0.95rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            background: var(--light-gray);
+            color: var(--text-color);
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background: var(--gray);
+            transform: translateY(-2px);
+        }
+
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .pagination button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1024px) {
+            #sidebar {
+                width: 250px;
+            }
+
+            main.with-sidebar {
+                margin-left: 250px;
+                width: calc(100% - 250px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #hamburger {
+                display: block;
+            }
+
+            #sidebar {
+                transform: translateX(-100%);
+            }
+
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            #product-catalog {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1rem;
+            }
+
+            #product-catalog {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card img {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="header-title">E-commerce Dashboard</h1>
+        <nav class="header-nav">
+            <i id="hamburger" class="fas fa-bars"></i>
+            <span id="user_name" class="user-name"></span>
+            <a href="index.html">Home</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </nav>
+    </header>
+
+    <aside id="sidebar">
+        <h3 class="sidebar-title">Menu</h3>
+        <ul>
+            <li><a href="#account-management-section"><i class="fas fa-user"></i> Account Management</a></li>
+            <li><a href="#shop-products-section"><i class="fas fa-shopping-bag"></i> Shop for Products</a></li>
+            <li><a href="#cart-section"><i class="fas fa-shopping-cart"></i> Your Cart</a></li>
+            <li><a href="#reviews-section"><i class="fas fa-star"></i> Leave Reviews</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <section id="account-management-section">
+            <h2 class="section-title">Account Management</h2>
+            <div class="mb-6">
+                <h3 class="section-subtitle">Update Profile</h3>
+                <form id="update-profile-form">
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <button type="submit">Update Profile</button>
+                </form>
+            </div>
+            <div>
+                <h3 class="section-subtitle">Order History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-history-tbody"></tbody>
+                </table>
+                <p id="no-orders" class="no-data hidden"></p>
+                <div id="order-history-pagination" class="pagination"></div>
+            </div>
+        </section>
+
+        <section id="shop-products-section">
+            <h2 class="section-title">Shop for Products</h2>
+            <input type="text" id="search-bar" placeholder="Search for products...">
+            <div id="product-catalog"></div>
+            <p id="no-products" class="no-data hidden"></p>
+            <div id="products-pagination" class="pagination"></div>
+        </section>
+
+        <section id="cart-section">
+            <h2 class="section-title">Your Cart</h2>
+            <div id="cart">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-tbody"></tbody>
+                </table>
+                <p id="no-cart-items" class="no-data hidden"></p>
+                <div id="cart-pagination" class="pagination"></div>
+                <button id="checkout-button">Proceed to Checkout</button>
+            </div>
+        </section>
+
+        <section id="reviews-section">
+            <h2 class="section-title">Leave Reviews and Ratings</h2>
+            <form id="review-form">
+                <label for="product-id" class="form-label">Product ID:</label>
+                <input type="number" id="product-id" name="product-id" required>
+                <label for="rating" class="form-label">Rating (1-5):</label>
+                <input type="number" id="rating" name="rating" min="1" max="5" required>
+                <label for="review-text" class="form-label">Review:</label>
+                <textarea id="review-text" name="review-text" required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="section-subtitle">Your Reviews</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Rating</th>
+                            <th>Review</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviews-tbody"></tbody>
+                </table>
+                <p id="no-reviews" class="no-data hidden"></p>
+                <div id="reviews-pagination" class="pagination"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 E-commerce Platform</p>
+    </footer>
+
+    <script src="js/auth-check.js"></script>
+    <script src="js/customer.js"></script>
+</body>
+
+</html>

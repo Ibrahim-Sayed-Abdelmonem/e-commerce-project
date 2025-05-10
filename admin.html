@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | E-commerce Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --light-gray: #f9fafb;
+            --gray: #e5e7eb;
+            --dark-gray: #9ca3af;
+            --error-color: #ef4444;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --hover-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-gray);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-color);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            right: 50px;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .header-nav a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .user-name {
+            cursor: pointer;
+        }
+
+        #hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        #hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        #sidebar {
+            width: 280px;
+            background: white;
+            color: var(--text-color);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: calc(100vh - 80px);
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: var(--card-shadow);
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #sidebar ul li a {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #sidebar ul li a:hover,
+        #sidebar ul li a.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(8px);
+        }
+
+        #sidebar ul li a i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        main {
+            margin-top: 80px;
+            margin-left: 0;
+            padding: 2rem;
+            flex-grow: 1;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        main.with-sidebar {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+        }
+
+        section {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            min-width: 800px;
+        }
+
+        table th,
+        table td {
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        table thead {
+            background: var(--light-gray);
+            color: var(--text-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        table thead th {
+            border-bottom: 2px solid var(--gray);
+        }
+
+        table tbody tr:nth-child(even) {
+            background: var(--light-gray);
+        }
+
+        table tbody tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-danger {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        form input,
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--gray);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--light-gray);
+        }
+
+        form input:focus,
+        form textarea:focus,
+        form select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background-color: white;
+        }
+
+        form button {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        form button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            background: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            width: 100%;
+            margin-top: auto;
+            font-size: 0.95rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            background: var(--light-gray);
+            color: var(--text-color);
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background: var(--gray);
+            transform: translateY(-2px);
+        }
+
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .pagination button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1024px) {
+            #sidebar {
+                width: 250px;
+            }
+
+            main.with-sidebar {
+                margin-left: 250px;
+                width: calc(100% - 250px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #hamburger {
+                display: block;
+            }
+
+            #sidebar {
+                transform: translateX(-100%);
+            }
+
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1rem;
+            }
+        }
+
+        /* Table Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn i {
+            font-size: 0.875rem;
+        }
+
+        .edit-btn {
+            background-color: var(--primary-color);
+            width: 100px;
+            height: 50px;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            border: none;
+        }
+
+        .edit-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background-color: var(--error-color);
+            color: white;
+            width: 100px;
+            height: 50px;
+            border-radius: 25px;
+            font-size: 18px;
+            border: none;
+
+        }
+
+        .delete-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            cursor: pointer;
+        }
+
+        .approve-btn {
+            background-color: var(--success-color);
+            color: white;
+            width: 100px;
+            height: 50px;
+            border-radius: 25px;
+            font-size: 18px;
+            border: none;
+        }
+
+        .approve-btn:hover {
+            background-color: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            cursor: pointer;
+        }
+
+        .reject-btn {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .view-btn {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Approval Status */
+        .update-order-status{
+            background-color: rgb(196, 196, 55);
+            width: 150px;
+            height: 50px;
+            border-radius: 25px;
+            font-size: 18px;
+            border: none;
+            color: white;
+        }
+        .update-order-status:hover{
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            cursor: pointer;
+        }
+        .approval-status {
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .approval-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .approval-approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .approval-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+
+            .action-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="header-title">E-commerce Dashboard</h1>
+        <nav class="header-nav">
+            <i id="hamburger" class="fas fa-bars"></i>
+            <span id="user_name" class="user-name"></span>
+            <a href="index.html">Home</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </nav>
+    </header>
+
+    <aside id="sidebar">
+        <h3 class="sidebar-title">Menu</h3>
+        <ul>
+            <li><a href="#user-management-section"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="#product-approval-section"><i class="fas fa-box"></i> Product Approval</a></li>
+            <li><a href="#order-management-section"><i class="fas fa-shopping-cart"></i> Order Management</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <section id="user-management-section">
+            <h2 class="section-title">User Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User id</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody"></tbody>
+            </table>
+            <p id="no-users" class="no-data hidden"></p>
+            <div id="users-pagination" class="pagination"></div>
+        </section>
+
+        <section id="product-approval-section">
+            <h2 class="section-title">Product Approval</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Seller Id</th>
+                            <th>Approval</th>
+                            <th>Actions</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="products-tbody"></tbody>
+                </table>
+            </div>
+            <p id="no-products" class="no-data hidden"></p>
+            <div id="products-pagination" class="pagination"></div>
+        </section>
+
+        <section id="order-management-section">
+            <h2 class="section-title">Order Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody"></tbody>
+            </table>
+            <p id="no-orders" class="no-data hidden"></p>
+            <div id="orders-pagination" class="pagination"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 E-commerce Platform</p>
+    </footer>
+
+    <script src="js/auth-check.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

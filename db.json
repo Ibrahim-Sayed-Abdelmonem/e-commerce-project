@@ -1,0 +1,217 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "email": "admin@mail.com",
+      "phone": "01234567891",
+      "password": "123456",
+      "role": "admin"
+    },
+    {
+      "id": "c1bb",
+      "username": "customer",
+      "email": "customer@mail.com",
+      "phone": "01234567891",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "id": "3401",
+      "username": "seller",
+      "email": "seller@mail.com",
+      "phone": "01234567891",
+      "password": "123456",
+      "role": "seller"
+    },
+    {
+      "id": "681c",
+      "username": "Hossam",
+      "email": "hossam@mail.com",
+      "phone": "01150964852",
+      "password": "123456",
+      "role": "seller"
+    },
+    {
+      "id": "80a7",
+      "username": "Hossam2",
+      "email": "hossam2@mail.com",
+      "phone": "01150964852",
+      "password": "123456",
+      "role": "customer"
+    }
+  ],
+  "products": [
+    {
+      "id": "2",
+      "name": "Smartphone",
+      "price": 500,
+      "category": "Electronics",
+      "image": "assets/img/pexels-fotios-photos-1092644.jpg",
+      "seller_id": 3401,
+      "approved": true
+    },
+    {
+      "id": "3",
+      "name": "Headphone",
+      "price": "350",
+      "category": "Accessories",
+      "image": "assets/img/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczczLXBhaS0xNTgta2FuYXRlLTAxLW1vY2t1cF8xLmpwZw.webp",
+      "seller_id": 3401,
+      "approved": true
+    },
+    {
+      "id": "4",
+      "name": "Backpack",
+      "price": 50,
+      "category": "Bags",
+      "image": "assets/img/photo-1509762774605-f07235a08f1f.jpeg",
+      "seller_id": 3401,
+      "approved": true
+    },
+    {
+      "id": "4c78",
+      "name": "microphone",
+      "price": "3000",
+      "category": "accessories",
+      "image": "assets/img/realistic-microphone-illustration_23-2150689808.avif",
+      "seller_id": 4,
+      "approved": false
+    },
+    {
+      "id": "e633",
+      "name": "smart watch",
+      "price": "1200",
+      "category": "accessories",
+      "image": "assets/img/images (1).jpeg",
+      "seller_id": 4,
+      "approved": true
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "customer_id": 2,
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 1
+        },
+        {
+          "product_id": 2,
+          "quantity": 2
+        }
+      ],
+      "total_price": 2000,
+      "status": "shipped"
+    },
+    {
+      "id": "6d94",
+      "customer_id": "c1bb",
+      "products": [
+        {
+          "product_id": "4",
+          "quantity": 1
+        },
+        {
+          "product_id": "3",
+          "quantity": 1
+        },
+        {
+          "product_id": "2",
+          "quantity": 1
+        }
+      ],
+      "total_price": 800,
+      "status": "processing"
+    },
+    {
+      "id": "f1a4",
+      "customer_id": "c1bb",
+      "products": [
+        {
+          "product_id": "4c78",
+          "quantity": 1
+        },
+        {
+          "product_id": "4",
+          "quantity": 1
+        }
+      ],
+      "total_price": 3050,
+      "status": "shipped"
+    },
+    {
+      "id": "3921",
+      "customer_id": "c1bb",
+      "products": [
+        {
+          "product_id": "3",
+          "quantity": 1
+        }
+      ],
+      "total_price": 250,
+      "status": "processing"
+    },
+    {
+      "id": "3754",
+      "customer_id": "c1bb",
+      "products": [
+        {
+          "product_id": "3",
+          "quantity": 1
+        },
+        {
+          "product_id": "2",
+          "quantity": 1
+        }
+      ],
+      "total_price": 750,
+      "status": "processing"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "2",
+      "product_id": 1,
+      "customer_id": 3,
+      "rating": 4,
+      "review": "Good quality product!"
+    },
+    {
+      "id": "adbe",
+      "product_id": "4",
+      "rating": "3",
+      "customer_id": "c1bb",
+      "review": "the item is very good"
+    },
+    {
+      "id": "1086",
+      "product_id": "3",
+      "rating": 3,
+      "review": "",
+      "customer_id": "c1bb"
+    },
+    {
+      "id": "0215",
+      "product_id": "4",
+      "rating": 3,
+      "review": "",
+      "customer_id": "c1bb"
+    },
+    {
+      "id": "582f",
+      "product_id": "2",
+      "rating": 5,
+      "review": "",
+      "customer_id": "c1bb"
+    },
+    {
+      "id": "6e1b",
+      "product_id": "4c78",
+      "rating": 3,
+      "review": "",
+      "customer_id": "c1bb"
+    }
+  ]
+}
